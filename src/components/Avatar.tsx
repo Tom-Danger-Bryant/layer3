@@ -1,7 +1,8 @@
+"use server"
 import { getAvatar } from "@/actions/getUsers";
 import Image from "next/image";
 
-export async function Avatar({ name } : {name : string}) {
+export async function Avatar({ name="" } : {name : string}) {
     const avatar = await getAvatar(name);
 
     return (<div className="h-[150px] w-full border-b border-slate-200 flex items-center justify-center bg-sky-200">

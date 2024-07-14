@@ -1,8 +1,8 @@
-import Page from '@/app/page';
+import CardSection from '@/components/CardSection';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { getUsers,getAvatar } from '../actions/getUsers';
+import { getUsers } from '../actions/getUsers';
 
 jest.mock('../actions/getUsers', () => ({
     getUsers : jest.fn(),
@@ -11,7 +11,6 @@ jest.mock('../actions/getUsers', () => ({
 jest.mock('../components/Avatar', () => ({ Avatar: () => 'Avatar' }));
 
 describe('Page Component Tests', () => {
-
 
     const MOCK_USERS = {users : [{
         rank : 1,
@@ -34,9 +33,9 @@ describe('Page Component Tests', () => {
 ]};
 
     it('renders a card with a user', async() => {
-        //@ts-ignore only exists at runtime
+        //@ts-ignore mock only exists at runtime
         getUsers.mockImplementation(()=> MOCK_USERS);
-        render(await Page());
+        render(await CardSection());
         MOCK_USERS.users.forEach((user)=>{
             expect(screen.getByText(user.username)).toBeInTheDocument();
         })

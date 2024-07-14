@@ -1,21 +1,22 @@
-
+"use server"
 interface User {
     rank : number;
-    adddress : string;
+    address : string;
     avatarCid : string;
     username : string;
     gmStreak : number;
     xp : number;
-    level : 41
+    level : number
 }
 
 import { Suspense } from "react";
 import { Avatar } from "./Avatar";
 import { AvatarLoading } from "./AvatarLoading";
-
+import Link from "next/link";
 
 const Card = ({user} : {user : User}) => {
     return (
+        <Link href={`user/${user.username}?address=${user.address}`}>
         <div data-test-id={`card-${user.username}`} className="border rounded-md shadow-md border-gray-200 bg-white">
                 <Suspense fallback={<AvatarLoading/>}>
                     <Avatar name={user.username}/>
@@ -30,6 +31,7 @@ const Card = ({user} : {user : User}) => {
                 <p className='text-sm text-gray-700'>{`GM Streak: ${user.gmStreak}`}</p>
                 </div>
         </div>
+        </Link>
     )
 
 }

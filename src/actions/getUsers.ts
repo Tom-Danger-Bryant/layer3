@@ -104,13 +104,11 @@ export const getUsers =  async () => {
 
 export const getAvatar = async (ethName : string) => {
     try {
-    const provider = new EtherscanProvider('mainnet',process.env.ETHERSCAN_API_KEY)
-    let avatar = provider.getAvatar(ethName);
-    return  avatar;
-    } catch (e) {
-        return null;
-    }
+      const provider = new EtherscanProvider('mainnet',process.env.ETHERSCAN_API_KEY)
+      let avatar = provider.getAvatar(ethName);
+      return  avatar;
+      } catch (e) {
+          return null;
+      }
 }
-
-
 
