@@ -3,6 +3,9 @@ import { render, screen} from '@testing-library/react';
 import '@testing-library/jest-dom'
 
 
+jest.mock('../components/Avatar', () => ({ Avatar: () => 'Avatar' }));
+
+
 describe('Card Component Tests', () => {
 
     const MOCK_USER = {

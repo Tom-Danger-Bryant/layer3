@@ -3,7 +3,8 @@ import Card from "@/components/Card";
 import { getUsers } from "@/actions/getUsers";
 
 export default async function Home() {
-  const {users} = await getUsers();
+  const {users} = await getUsers(); 
+   
   return (
   <div className="flex flex-col items-center bg-gray-100">
     <div className="my-4">

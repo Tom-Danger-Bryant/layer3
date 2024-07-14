@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   description: "Top users of Layer3",
 };
 
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -17,7 +18,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+
       <body className={inter.className}>{children}</body>
+
     </html>
   );
 }

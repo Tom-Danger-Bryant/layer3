@@ -1,4 +1,6 @@
 "use server";
+import {  EtherscanProvider } from "ethers";
+
 
 const USER_API = {
     "users": [
@@ -98,3 +100,17 @@ const USER_API = {
 export const getUsers =  async () => {
     return USER_API;
 };
+
+
+export const getAvatar = async (ethName : string) => {
+    try {
+    const provider = new EtherscanProvider('mainnet',process.env.ETHERSCAN_API_KEY)
+    let avatar = provider.getAvatar(ethName);
+    return  avatar;
+    } catch (e) {
+        return null;
+    }
+}
+
+
+

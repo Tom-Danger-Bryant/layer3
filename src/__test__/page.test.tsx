@@ -2,14 +2,16 @@ import Page from '@/app/page';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { getUsers } from '../actions/getUsers';
+import { getUsers,getAvatar } from '../actions/getUsers';
 
 jest.mock('../actions/getUsers', () => ({
-    getUsers : jest.fn()
+    getUsers : jest.fn(),
 }));
 
+jest.mock('../components/Avatar', () => ({ Avatar: () => 'Avatar' }));
 
-describe('Card Component Tests', () => {
+describe('Page Component Tests', () => {
+
 
     const MOCK_USERS = {users : [{
         rank : 1,
