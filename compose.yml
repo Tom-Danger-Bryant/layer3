@@ -1,0 +1,11 @@
+services: 
+  frontend:
+    image: frontend
+    build :
+      dockerfile: Dockerfile
+    restart : always
+    env_file: 
+      - .env.local
+    ports: 
+      - "3000:3000"
+

@@ -45,7 +45,6 @@ const getTokenLocation = async (contractAddress : string, abi : ethers.Interface
         if(tokenInfo.split('ipfs://').length > 1) tokenInfo = IPFSRewrite(tokenInfo);
         return ok(tokenInfo)
         } catch (e) {
-            console.log(e.message);
             return err('error envoking tokenURI');
         }
     }
@@ -106,7 +105,7 @@ export const POST = async (request : NextRequest ) => {
     const cacheAge : number =  (process.env.CACHE_AGE ? parseInt(process.env.CACHE_AGE) : 3600000);
     let cacheCheck : number  = Date.now() - cacheAge;
 
-    const cached = await prisma.NFT.findFirst({
+    const cached = await prisma.nFT.findFirst({
             where : {
                 contractAddress : contractAddress,
                 tokenId : tokenId,
@@ -125,7 +124,7 @@ export const POST = async (request : NextRequest ) => {
         } else {
             const result = await grabNFT(tokenId, contractAddress, 5);
                 if(result){
-                    await prisma.NFT.upsert({
+                    await prisma.nFT.upsert({
                         where : {
                             tokenId_contractAddress : {
                                 contractAddress : contractAddress,
