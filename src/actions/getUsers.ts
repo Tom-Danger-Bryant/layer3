@@ -1,5 +1,6 @@
 "use server";
 import {  EtherscanProvider } from "ethers";
+import { prisma } from '@/lib/prisma';
 
 
 const USER_API = {
@@ -101,14 +102,43 @@ export const getUsers =  async () => {
     return USER_API;
 };
 
-
 export const getAvatar = async (ethName : string) => {
+    const cacheAge : number =  (process.env.CACHE_AGE ? parseInt(process.env.CACHE_AGE) : 3600000);
+    let cacheCheck : number  = Date.now() - cacheAge;
     try {
+      let cachedAvatar = await prisma.avatar.findFirst({
+        where : {
+          ethAddress : ethName,
+          updatedAt : {
+            gte: new Date(cacheCheck)
+          }
+        }
+      });
+      if(cachedAvatar) {
+        return cachedAvatar.url;
+      }
+      else {
       const provider = new EtherscanProvider('mainnet',process.env.ETHERSCAN_API_KEY)
-      let avatar = provider.getAvatar(ethName);
+      let avatar = await provider.getAvatar(ethName);
+      if(avatar){
+        await prisma.avatar.upsert({
+          where : {
+            ethAddress : ethName
+          },
+          update : {
+            url : avatar
+          },
+          create: { 
+            ethAddress : ethName,
+            url : avatar,
+          }
+        });
+      }
       return  avatar;
+      } 
       } catch (e) {
+        console.log(e);
           return null;
       }
-}
+    }
 

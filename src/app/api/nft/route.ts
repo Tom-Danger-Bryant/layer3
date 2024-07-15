@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { EtherscanProvider, ethers } from "ethers";
 import { ok, err,Result } from 'neverthrow'
+import  {prisma}  from '@/lib/prisma';
 
 
 const ETHERSCAN_API = 'https://api.etherscan.io/api';
@@ -56,7 +57,7 @@ const getImageAddressFromLocation = async (url : string ) : Promise<Result<strin
         if(imageGrab.status === 200) {
             const imageLocation = await imageGrab.json();
             if(imageLocation.image.split('ipfs://').length > 1) imageLocation.image = IPFSRewrite(imageLocation.image);
-            return ok(imageLocation);
+            return ok(imageLocation.image);
         } else {
             return err('Could not reach image url')
         }
@@ -97,13 +98,56 @@ const IPFSRewrite = (ipfsUrl : string ) => {
     return `https://gateway.ipfs.io/ipfs/${base}`
 }
 
+
+
+
 export const POST = async (request : NextRequest ) => {
     const { tokenName, tokenId, contractAddress } =  await request.json();
-        const result = await grabNFT(tokenId, contractAddress, 5);
-        return Response.json({
-            tokenName,
-            result : result
-     });
+    const cacheAge : number =  (process.env.CACHE_AGE ? parseInt(process.env.CACHE_AGE) : 3600000);
+    let cacheCheck : number  = Date.now() - cacheAge;
+
+    const cached = await prisma.NFT.findFirst({
+            where : {
+                contractAddress : contractAddress,
+                tokenId : tokenId,
+                updatedAt : {
+                    gte: new Date(cacheCheck)
+                }
+            }
+        });
+        if(cached) {
+            return Response.json({
+                tokenName,
+                result : { 
+                    image : cached.url
+                }
+            })
+        } else {
+            const result = await grabNFT(tokenId, contractAddress, 5);
+                if(result){
+                    await prisma.NFT.upsert({
+                        where : {
+                            tokenId_contractAddress : {
+                                contractAddress : contractAddress,
+                                tokenId : tokenId
+                            }
+                        },
+                        update : {
+                            url : result
+                        },
+                        create : {
+                            contractAddress,
+                            tokenId,
+                            url : result
+                        }
+                    });
+                }
+
+            return Response.json({
+                tokenName,
+                result : result ? {image : result} : null
+        });
+        }
 };
 
 

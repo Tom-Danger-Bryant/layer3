@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Avatar {
+  id         Int      @id @default(autoincrement())
+  ethAddress String   @unique @map("eth_address")
+  url        String
+  updatedAt  DateTime @updatedAt @map(name: "updated_at")
+
+  @@map(name: "avatars")
+}
+
+model NFT {
+  id              Int      @id @default(autoincrement())
+  tokenId         String   @map("token_id")
+  contractAddress String   @map("contract_address")
+  updatedAt       DateTime @updatedAt @map(name: "updated_at")
+  url             String
+
+  @@unique([tokenId, contractAddress])
+  @@map(name: "nfts")
+}
